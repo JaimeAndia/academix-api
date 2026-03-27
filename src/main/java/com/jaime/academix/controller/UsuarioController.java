@@ -1,10 +1,10 @@
 package com.jaime.academix.controller;
 
-import com.jaime.academix.domain.request.ActualizarPerfilRequest;
-import com.jaime.academix.domain.request.CambiarRolRequest;
-import com.jaime.academix.domain.response.MensajeResponse;
-import com.jaime.academix.domain.response.UsuarioResponse;
-import com.jaime.academix.entity.Usuario;
+import com.jaime.academix.dto.request.ActualizarPerfilRequest;
+import com.jaime.academix.dto.request.CambiarRolRequest;
+import com.jaime.academix.dto.response.MensajeResponse;
+import com.jaime.academix.dto.response.UsuarioResponse;
+import com.jaime.academix.domain.Usuario;
 import com.jaime.academix.service.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

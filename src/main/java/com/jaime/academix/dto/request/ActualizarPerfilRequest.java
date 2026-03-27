@@ -1,4 +1,4 @@
-package com.jaime.academix.domain.request;
+package com.jaime.academix.dto.request;
 
 import lombok.*;
 

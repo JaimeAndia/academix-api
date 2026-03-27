@@ -1,7 +1,7 @@
 package com.jaime.academix.repository;
 
-import com.jaime.academix.entity.Asignatura;
-import com.jaime.academix.entity.Tema;
+import com.jaime.academix.domain.Asignatura;
+import com.jaime.academix.domain.Tema;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

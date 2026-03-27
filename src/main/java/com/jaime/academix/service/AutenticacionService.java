@@ -1,12 +1,12 @@
 package com.jaime.academix.service;
 
 import com.jaime.academix.assembler.UsuarioAssembler;
-import com.jaime.academix.domain.request.LoginRequest;
-import com.jaime.academix.domain.request.RegistroRequest;
-import com.jaime.academix.domain.response.AuthResponse;
-import com.jaime.academix.entity.Carrera;
-import com.jaime.academix.entity.Rol;
-import com.jaime.academix.entity.Usuario;
+import com.jaime.academix.dto.request.LoginRequest;
+import com.jaime.academix.dto.request.RegistroRequest;
+import com.jaime.academix.dto.response.AuthResponse;
+import com.jaime.academix.domain.Carrera;
+import com.jaime.academix.domain.Rol;
+import com.jaime.academix.domain.Usuario;
 import com.jaime.academix.exception.BadRequestException;
 import com.jaime.academix.repository.CarreraRepository;
 import com.jaime.academix.repository.UsuarioRepository;

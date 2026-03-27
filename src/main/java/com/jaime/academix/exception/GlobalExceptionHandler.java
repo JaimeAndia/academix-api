@@ -1,6 +1,6 @@
 package com.jaime.academix.exception;
 
-import com.jaime.academix.domain.response.ErrorResponse;
+import com.jaime.academix.dto.response.ErrorResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;

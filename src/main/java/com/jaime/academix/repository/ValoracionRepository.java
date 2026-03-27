@@ -1,8 +1,8 @@
 package com.jaime.academix.repository;
 
-import com.jaime.academix.entity.Apunte;
-import com.jaime.academix.entity.Usuario;
-import com.jaime.academix.entity.Valoracion;
+import com.jaime.academix.domain.Apunte;
+import com.jaime.academix.domain.Usuario;
+import com.jaime.academix.domain.Valoracion;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

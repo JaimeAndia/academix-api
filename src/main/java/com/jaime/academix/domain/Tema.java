@@ -1,16 +1,16 @@
-package com.jaime.academix.entity;
+package com.jaime.academix.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "asignaturas")
+@Table(name = "temas")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Asignatura {
+public class Tema {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,6 +20,6 @@ public class Asignatura {
     private String nombre;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "carrera_id", nullable = false)
-    private Carrera carrera;
+    @JoinColumn(name = "asignatura_id", nullable = false)
+    private Asignatura asignatura;
 }

@@ -1,7 +1,7 @@
 package com.jaime.academix.service;
 
-import com.jaime.academix.entity.Insignia;
-import com.jaime.academix.entity.Usuario;
+import com.jaime.academix.domain.Insignia;
+import com.jaime.academix.domain.Usuario;
 import com.jaime.academix.repository.InsigniaRepository;
 import com.jaime.academix.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;

@@ -1,12 +1,12 @@
 package com.jaime.academix.service;
 
 import com.jaime.academix.assembler.ValoracionAssembler;
-import com.jaime.academix.domain.request.ValoracionRequest;
-import com.jaime.academix.domain.response.MensajeResponse;
-import com.jaime.academix.domain.response.ValoracionResponse;
-import com.jaime.academix.entity.Apunte;
-import com.jaime.academix.entity.Usuario;
-import com.jaime.academix.entity.Valoracion;
+import com.jaime.academix.dto.request.ValoracionRequest;
+import com.jaime.academix.dto.response.MensajeResponse;
+import com.jaime.academix.dto.response.ValoracionResponse;
+import com.jaime.academix.domain.Apunte;
+import com.jaime.academix.domain.Usuario;
+import com.jaime.academix.domain.Valoracion;
 import com.jaime.academix.exception.ResourceNotFoundException;
 import com.jaime.academix.exception.BadRequestException;
 import com.jaime.academix.repository.ApunteRepository;

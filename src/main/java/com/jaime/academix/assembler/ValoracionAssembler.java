@@ -1,7 +1,7 @@
 package com.jaime.academix.assembler;
 
-import com.jaime.academix.domain.response.ValoracionResponse;
-import com.jaime.academix.entity.Valoracion;
+import com.jaime.academix.dto.response.ValoracionResponse;
+import com.jaime.academix.domain.Valoracion;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -1,7 +1,7 @@
 package com.jaime.academix.assembler;
 
-import com.jaime.academix.domain.response.ApunteResponse;
-import com.jaime.academix.entity.Apunte;
+import com.jaime.academix.dto.response.ApunteResponse;
+import com.jaime.academix.domain.Apunte;
 import org.springframework.stereotype.Component;
 
 @Component

@@ -1,8 +1,8 @@
 package com.jaime.academix.assembler;
 
-import com.jaime.academix.domain.response.UsuarioResponse;
-import com.jaime.academix.entity.Insignia;
-import com.jaime.academix.entity.Usuario;
+import com.jaime.academix.dto.response.UsuarioResponse;
+import com.jaime.academix.domain.Insignia;
+import com.jaime.academix.domain.Usuario;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;

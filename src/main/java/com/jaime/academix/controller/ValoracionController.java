@@ -1,9 +1,9 @@
 package com.jaime.academix.controller;
 
-import com.jaime.academix.domain.request.ValoracionRequest;
-import com.jaime.academix.domain.response.MensajeResponse;
-import com.jaime.academix.domain.response.ValoracionResponse;
-import com.jaime.academix.entity.Usuario;
+import com.jaime.academix.dto.request.ValoracionRequest;
+import com.jaime.academix.dto.response.MensajeResponse;
+import com.jaime.academix.dto.response.ValoracionResponse;
+import com.jaime.academix.domain.Usuario;
 import com.jaime.academix.service.ValoracionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

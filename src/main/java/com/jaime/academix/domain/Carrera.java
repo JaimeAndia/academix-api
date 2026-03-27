@@ -1,4 +1,4 @@
-package com.jaime.academix.entity;
+package com.jaime.academix.domain;
 
 import jakarta.persistence.*;
 import lombok.*;

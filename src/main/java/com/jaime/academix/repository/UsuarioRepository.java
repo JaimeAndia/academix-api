@@ -1,6 +1,6 @@
 package com.jaime.academix.repository;
 
-import com.jaime.academix.entity.Usuario;
+import com.jaime.academix.domain.Usuario;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

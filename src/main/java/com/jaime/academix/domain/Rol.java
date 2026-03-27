@@ -1,4 +1,4 @@
-package com.jaime.academix.entity;
+package com.jaime.academix.domain;
 
 public enum Rol {
     USER,

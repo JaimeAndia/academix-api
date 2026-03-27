@@ -1,13 +1,13 @@
 package com.jaime.academix.service;
 
 import com.jaime.academix.assembler.UsuarioAssembler;
-import com.jaime.academix.domain.request.ActualizarPerfilRequest;
-import com.jaime.academix.domain.request.CambiarRolRequest;
-import com.jaime.academix.domain.response.MensajeResponse;
-import com.jaime.academix.domain.response.UsuarioResponse;
-import com.jaime.academix.entity.Carrera;
-import com.jaime.academix.entity.Rol;
-import com.jaime.academix.entity.Usuario;
+import com.jaime.academix.dto.request.ActualizarPerfilRequest;
+import com.jaime.academix.dto.request.CambiarRolRequest;
+import com.jaime.academix.dto.response.MensajeResponse;
+import com.jaime.academix.dto.response.UsuarioResponse;
+import com.jaime.academix.domain.Carrera;
+import com.jaime.academix.domain.Rol;
+import com.jaime.academix.domain.Usuario;
 import com.jaime.academix.exception.UnauthorizedAccessException;
 import com.jaime.academix.exception.ResourceNotFoundException;
 import com.jaime.academix.exception.BadRequestException;

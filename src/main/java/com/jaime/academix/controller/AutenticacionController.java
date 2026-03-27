@@ -1,8 +1,8 @@
 package com.jaime.academix.controller;
 
-import com.jaime.academix.domain.request.LoginRequest;
-import com.jaime.academix.domain.request.RegistroRequest;
-import com.jaime.academix.domain.response.AuthResponse;
+import com.jaime.academix.dto.request.LoginRequest;
+import com.jaime.academix.dto.request.RegistroRequest;
+import com.jaime.academix.dto.response.AuthResponse;
 import com.jaime.academix.service.AutenticacionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

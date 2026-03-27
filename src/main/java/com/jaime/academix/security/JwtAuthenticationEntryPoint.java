@@ -1,7 +1,7 @@
 package com.jaime.academix.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jaime.academix.domain.response.ErrorResponse;
+import com.jaime.academix.dto.response.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.MediaType;
