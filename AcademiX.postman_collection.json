@@ -1,0 +1,609 @@
+{
+	"info": {
+		"_postman_id": "academix-api-collection",
+		"name": "AcademiX API",
+		"description": "Colección completa para probar la API REST de AcademiX.\n\n**Flujo recomendado:**\n1. Registrar un usuario (`Auth > Registrar`)\n2. Hacer login (`Auth > Login`) → el token se guarda automáticamente\n3. Probar los demás endpoints autenticados\n\n**Variables de colección:**\n- `base_url`: URL base del servidor (default: `http://localhost:9090`)\n- `access_token`: Se auto-rellena tras login/registro\n- `refresh_token`: Se auto-rellena tras login/registro",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:9090",
+			"type": "string"
+		},
+		{
+			"key": "access_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "refresh_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "user_id",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "note_id",
+			"value": "1",
+			"type": "string"
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{access_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"description": "Endpoints de autenticación: registro, login y renovación de token.",
+			"item": [
+				{
+					"name": "Registrar usuario",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.accessToken) {",
+									"        pm.collectionVariables.set('access_token', jsonData.accessToken);",
+									"    }",
+									"    if (jsonData.refreshToken) {",
+									"        pm.collectionVariables.set('refresh_token', jsonData.refreshToken);",
+									"    }",
+									"    pm.test('Usuario registrado correctamente', function () {",
+									"        pm.response.to.have.status(201);",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nombreUsuario\": \"testuser\",\n    \"correo\": \"test@academix.com\",\n    \"contrasena\": \"password123\",\n    \"nombreCompleto\": \"Test User\",\n    \"carrera\": \"Ingeniería Informática\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/register",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "register"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.accessToken) {",
+									"        pm.collectionVariables.set('access_token', jsonData.accessToken);",
+									"    }",
+									"    if (jsonData.refreshToken) {",
+									"        pm.collectionVariables.set('refresh_token', jsonData.refreshToken);",
+									"    }",
+									"    pm.test('Login correcto', function () {",
+									"        pm.response.to.have.status(200);",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"usuarioOCorreo\": \"testuser\",\n    \"contrasena\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "login"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Renovar Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.accessToken) {",
+									"        pm.collectionVariables.set('access_token', jsonData.accessToken);",
+									"    }",
+									"    if (jsonData.refreshToken) {",
+									"        pm.collectionVariables.set('refresh_token', jsonData.refreshToken);",
+									"    }",
+									"    pm.test('Token renovado correctamente', function () {",
+									"        pm.response.to.have.status(200);",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Refresh-Token",
+								"value": "{{refresh_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/auth/refresh",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "refresh"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Usuarios",
+			"description": "Gestión de usuarios: perfil propio, perfil público, ranking, cambio de rol y desactivación.",
+			"item": [
+				{
+					"name": "Obtener mi perfil",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/users/me",
+							"host": ["{{base_url}}"],
+							"path": ["api", "users", "me"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar mi perfil",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nombreCompleto\": \"Test User Actualizado\",\n    \"biografia\": \"Estudiante de informática apasionado por la tecnología\",\n    \"carrera\": \"Ingeniería Informática\",\n    \"fotoPerfilUrl\": \"https://example.com/avatar.jpg\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/users/me",
+							"host": ["{{base_url}}"],
+							"path": ["api", "users", "me"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener perfil público",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/users/{{user_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "users", "{{user_id}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener ranking",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/users/ranking?page=0&size=10&sort=puntuacion,desc",
+							"host": ["{{base_url}}"],
+							"path": ["api", "users", "ranking"],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								},
+								{
+									"key": "sort",
+									"value": "puntuacion,desc"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cambiar rol (ADMIN)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"rol\": \"ADMIN\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/users/{{user_id}}/role",
+							"host": ["{{base_url}}"],
+							"path": ["api", "users", "{{user_id}}", "role"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Desactivar cuenta",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/users/{{user_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "users", "{{user_id}}"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Apuntes",
+			"description": "CRUD completo de apuntes: crear, listar, buscar, editar, publicar, descargar y subir archivos.",
+			"item": [
+				{
+					"name": "Crear apunte",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.id) {",
+									"        pm.collectionVariables.set('note_id', jsonData.id);",
+									"    }",
+									"    pm.test('Apunte creado correctamente', function () {",
+									"        pm.response.to.have.status(201);",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"titulo\": \"Introducción a Spring Boot\",\n    \"descripcion\": \"Apuntes sobre los conceptos básicos de Spring Boot\",\n    \"contenido\": \"# Spring Boot\\n\\nSpring Boot es un framework que facilita la creación de aplicaciones Java...\",\n    \"temaId\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/notes",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notes"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar mis apuntes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/notes/my?page=0&size=10",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notes", "my"],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar apuntes públicos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/notes/public?page=0&size=10",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notes", "public"],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar apuntes públicos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/notes/public/search?q=spring&page=0&size=10",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notes", "public", "search"],
+							"query": [
+								{
+									"key": "q",
+									"value": "spring"
+								},
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener apunte por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/notes/{{note_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notes", "{{note_id}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Editar apunte",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"titulo\": \"Introducción a Spring Boot (Actualizado)\",\n    \"descripcion\": \"Apuntes actualizados sobre Spring Boot\",\n    \"contenido\": \"# Spring Boot\\n\\nContenido actualizado con más detalle...\",\n    \"temaId\": 1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/notes/{{note_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notes", "{{note_id}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Publicar apunte",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/notes/{{note_id}}/publish",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notes", "{{note_id}}", "publish"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Descargar apunte",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/notes/{{note_id}}/download",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notes", "{{note_id}}", "download"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Subir archivo a apunte",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": ""
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/notes/{{note_id}}/upload-file",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notes", "{{note_id}}", "upload-file"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar apunte",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/notes/{{note_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notes", "{{note_id}}"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Valoraciones",
+			"description": "Gestión de valoraciones sobre apuntes: crear, actualizar, listar y eliminar.",
+			"item": [
+				{
+					"name": "Crear valoración",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"puntuacion\": 5,\n    \"comentario\": \"Excelentes apuntes, muy bien explicado\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/notes/{{note_id}}/ratings",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notes", "{{note_id}}", "ratings"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Actualizar valoración",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"puntuacion\": 4,\n    \"comentario\": \"Buenos apuntes, aunque podrían tener más ejemplos\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/notes/{{note_id}}/ratings",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notes", "{{note_id}}", "ratings"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar valoraciones",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/notes/{{note_id}}/ratings?page=0&size=10",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notes", "{{note_id}}", "ratings"],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "size",
+									"value": "10"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar valoración",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/notes/{{note_id}}/ratings",
+							"host": ["{{base_url}}"],
+							"path": ["api", "notes", "{{note_id}}", "ratings"]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

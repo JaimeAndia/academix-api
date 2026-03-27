@@ -13,20 +13,20 @@ import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
-public class ManejadorGlobalExcepciones {
+public class GlobalExceptionHandler {
 
-    @ExceptionHandler(SolicitudInvalidaException.class)
-    public ResponseEntity<ErrorResponse> manejarSolicitudInvalida(SolicitudInvalidaException ex) {
+    @ExceptionHandler(BadRequestException.class)
+    public ResponseEntity<ErrorResponse> manejarBadRequest(BadRequestException ex) {
         return construirRespuestaError(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
-    @ExceptionHandler(RecursoNoEncontradoException.class)
-    public ResponseEntity<ErrorResponse> manejarRecursoNoEncontrado(RecursoNoEncontradoException ex) {
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponse> manejarResourceNotFound(ResourceNotFoundException ex) {
         return construirRespuestaError(HttpStatus.NOT_FOUND, ex.getMessage());
     }
 
-    @ExceptionHandler(AccesoNoAutorizadoException.class)
-    public ResponseEntity<ErrorResponse> manejarAccesoNoAutorizado(AccesoNoAutorizadoException ex) {
+    @ExceptionHandler(UnauthorizedAccessException.class)
+    public ResponseEntity<ErrorResponse> manejarUnauthorizedAccess(UnauthorizedAccessException ex) {
         return construirRespuestaError(HttpStatus.FORBIDDEN, ex.getMessage());
     }
 

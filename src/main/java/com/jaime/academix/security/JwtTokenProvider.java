@@ -12,7 +12,7 @@ import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Component
-public class JwtProveedorToken {
+public class JwtTokenProvider {
 
     @Value("${jwt.secret}")
     private String secreto;

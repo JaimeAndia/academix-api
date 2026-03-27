@@ -8,9 +8,9 @@ import com.jaime.academix.domain.response.UsuarioResponse;
 import com.jaime.academix.entity.Carrera;
 import com.jaime.academix.entity.Rol;
 import com.jaime.academix.entity.Usuario;
-import com.jaime.academix.exception.AccesoNoAutorizadoException;
-import com.jaime.academix.exception.RecursoNoEncontradoException;
-import com.jaime.academix.exception.SolicitudInvalidaException;
+import com.jaime.academix.exception.UnauthorizedAccessException;
+import com.jaime.academix.exception.ResourceNotFoundException;
+import com.jaime.academix.exception.BadRequestException;
 import com.jaime.academix.repository.CarreraRepository;
 import com.jaime.academix.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class ServicioUsuario {
+public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
     private final CarreraRepository carreraRepository;
@@ -44,7 +44,7 @@ public class ServicioUsuario {
         }
         if (request.getCarrera() != null) {
             Carrera carrera = carreraRepository.findByNombre(request.getCarrera())
-                    .orElseThrow(() -> new RecursoNoEncontradoException(
+                    .orElseThrow(() -> new ResourceNotFoundException(
                             "No se encontró la carrera: " + request.getCarrera()));
             usuario.setCarrera(carrera);
         }
@@ -55,7 +55,7 @@ public class ServicioUsuario {
 
     public UsuarioResponse obtenerPerfilPublico(Long id) {
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RecursoNoEncontradoException("No se encontró el usuario con id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("No se encontró el usuario con id: " + id));
         return usuarioAssembler.aResponsePublico(usuario);
     }
 
@@ -67,13 +67,13 @@ public class ServicioUsuario {
     @Transactional
     public UsuarioResponse cambiarRol(Long id, CambiarRolRequest request) {
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RecursoNoEncontradoException("No se encontró el usuario con id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("No se encontró el usuario con id: " + id));
 
         try {
             Rol nuevoRol = Rol.valueOf(request.getRol().toUpperCase());
             usuario.setRol(nuevoRol);
         } catch (IllegalArgumentException e) {
-            throw new SolicitudInvalidaException("Rol no válido: " + request.getRol());
+            throw new BadRequestException("Rol no válido: " + request.getRol());
         }
 
         usuarioRepository.save(usuario);
@@ -83,13 +83,13 @@ public class ServicioUsuario {
     @Transactional
     public MensajeResponse desactivarCuenta(Long id, Usuario usuarioActual) {
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RecursoNoEncontradoException("No se encontró el usuario con id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("No se encontró el usuario con id: " + id));
 
         boolean esAdmin = usuarioActual.getRol() == Rol.ADMIN;
         boolean esPropietario = usuarioActual.getId().equals(id);
 
         if (!esAdmin && !esPropietario) {
-            throw new AccesoNoAutorizadoException("No tienes permiso para desactivar esta cuenta");
+            throw new UnauthorizedAccessException("No tienes permiso para desactivar esta cuenta");
         }
 
         usuario.setActivo(false);

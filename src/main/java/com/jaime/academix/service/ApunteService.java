@@ -8,8 +8,8 @@ import com.jaime.academix.entity.Apunte;
 import com.jaime.academix.entity.Rol;
 import com.jaime.academix.entity.Tema;
 import com.jaime.academix.entity.Usuario;
-import com.jaime.academix.exception.AccesoNoAutorizadoException;
-import com.jaime.academix.exception.RecursoNoEncontradoException;
+import com.jaime.academix.exception.UnauthorizedAccessException;
+import com.jaime.academix.exception.ResourceNotFoundException;
 import com.jaime.academix.repository.ApunteRepository;
 import com.jaime.academix.repository.TemaRepository;
 import com.jaime.academix.repository.UsuarioRepository;
@@ -30,13 +30,13 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class ServicioApunte {
+public class ApunteService {
 
     private final ApunteRepository apunteRepository;
     private final TemaRepository temaRepository;
     private final UsuarioRepository usuarioRepository;
     private final ApunteAssembler apunteAssembler;
-    private final ServicioReputacion servicioReputacion;
+    private final ReputacionService reputacionService;
 
     @Value("${app.upload.dir}")
     private String directorioSubida;
@@ -46,7 +46,7 @@ public class ServicioApunte {
         Tema tema = null;
         if (request.getTemaId() != null) {
             tema = temaRepository.findById(request.getTemaId())
-                    .orElseThrow(() -> new RecursoNoEncontradoException(
+                    .orElseThrow(() -> new ResourceNotFoundException(
                             "No se encontró el tema con id: " + request.getTemaId()));
         }
 
@@ -85,7 +85,7 @@ public class ServicioApunte {
 
         if (!apunte.getEsPublico() && (usuarioActual == null ||
                 !apunte.getAutor().getId().equals(usuarioActual.getId()))) {
-            throw new AccesoNoAutorizadoException("No tienes permiso para ver este apunte");
+            throw new UnauthorizedAccessException("No tienes permiso para ver este apunte");
         }
 
         return apunteAssembler.aResponse(apunte);
@@ -107,7 +107,7 @@ public class ServicioApunte {
         }
         if (request.getTemaId() != null) {
             Tema tema = temaRepository.findById(request.getTemaId())
-                    .orElseThrow(() -> new RecursoNoEncontradoException(
+                    .orElseThrow(() -> new ResourceNotFoundException(
                             "No se encontró el tema con id: " + request.getTemaId()));
             apunte.setTema(tema);
         }
@@ -124,7 +124,7 @@ public class ServicioApunte {
         boolean esAdmin = usuario.getRol() == Rol.ADMIN;
 
         if (!esAutor && !esAdmin) {
-            throw new AccesoNoAutorizadoException("No tienes permiso para eliminar este apunte");
+            throw new UnauthorizedAccessException("No tienes permiso para eliminar este apunte");
         }
 
         apunteRepository.delete(apunte);
@@ -139,7 +139,7 @@ public class ServicioApunte {
         if (!apunte.getEsPublico()) {
             apunte.setEsPublico(true);
             autor.setApuntesSubidos(autor.getApuntesSubidos() + 1);
-            servicioReputacion.sumarReputacion(autor, 10);
+            reputacionService.sumarReputacion(autor, 10);
             apunteRepository.save(apunte);
         }
 
@@ -156,7 +156,7 @@ public class ServicioApunte {
 
         // Bonus por popularidad: +5 cada 10 descargas
         if (apunte.getCantidadDescargas() % 10 == 0) {
-            servicioReputacion.sumarReputacion(apunte.getAutor(), 5);
+            reputacionService.sumarReputacion(apunte.getAutor(), 5);
         }
 
         apunteRepository.save(apunte);
@@ -185,12 +185,12 @@ public class ServicioApunte {
 
     private Apunte buscarApuntePorId(Long id) {
         return apunteRepository.findById(id)
-                .orElseThrow(() -> new RecursoNoEncontradoException("No se encontró el apunte con id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("No se encontró el apunte con id: " + id));
     }
 
     private void verificarAutoria(Apunte apunte, Usuario autor) {
         if (!apunte.getAutor().getId().equals(autor.getId())) {
-            throw new AccesoNoAutorizadoException("No tienes permiso para modificar este apunte");
+            throw new UnauthorizedAccessException("No tienes permiso para modificar este apunte");
         }
     }
 }

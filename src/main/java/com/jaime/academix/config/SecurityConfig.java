@@ -1,7 +1,7 @@
 package com.jaime.academix.config;
 
-import com.jaime.academix.security.JwtFiltroAutenticacion;
-import com.jaime.academix.security.JwtPuntoEntradaAutenticacion;
+import com.jaime.academix.security.JwtAuthenticationFilter;
+import com.jaime.academix.security.JwtAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,27 +21,27 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @EnableMethodSecurity
 @RequiredArgsConstructor
-public class ConfiguracionSeguridad {
+public class SecurityConfig {
 
-    private final JwtPuntoEntradaAutenticacion puntoEntradaAutenticacion;
-    private final JwtFiltroAutenticacion jwtFiltroAutenticacion;
+    private final JwtAuthenticationEntryPoint authenticationEntryPoint;
+    private final JwtAuthenticationFilter authenticationFilter;
 
     @Bean
-    public PasswordEncoder codificadorContrasena() {
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public AuthenticationManager gestorAutenticacion(AuthenticationConfiguration config) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
     @Bean
-    public SecurityFilterChain cadenaFiltrosSeguridad(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .exceptionHandling(exception -> exception
-                        .authenticationEntryPoint(puntoEntradaAutenticacion))
+                        .authenticationEntryPoint(authenticationEntryPoint))
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
@@ -50,7 +50,7 @@ public class ConfiguracionSeguridad {
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(jwtFiltroAutenticacion, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

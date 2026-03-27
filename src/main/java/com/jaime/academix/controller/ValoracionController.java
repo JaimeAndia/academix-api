@@ -4,7 +4,7 @@ import com.jaime.academix.domain.request.ValoracionRequest;
 import com.jaime.academix.domain.response.MensajeResponse;
 import com.jaime.academix.domain.response.ValoracionResponse;
 import com.jaime.academix.entity.Usuario;
-import com.jaime.academix.service.ServicioValoracion;
+import com.jaime.academix.service.ValoracionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -17,16 +17,16 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/notes/{noteId}/ratings")
 @RequiredArgsConstructor
-public class ControladorValoracion {
+public class ValoracionController {
 
-    private final ServicioValoracion servicioValoracion;
+    private final ValoracionService valoracionService;
 
     @PostMapping
     public ResponseEntity<ValoracionResponse> crearValoracion(
             @PathVariable Long noteId,
             @Valid @RequestBody ValoracionRequest request,
             @AuthenticationPrincipal Usuario usuario) {
-        return new ResponseEntity<>(servicioValoracion.crearValoracion(noteId, request, usuario), HttpStatus.CREATED);
+        return new ResponseEntity<>(valoracionService.crearValoracion(noteId, request, usuario), HttpStatus.CREATED);
     }
 
     @PutMapping
@@ -34,20 +34,20 @@ public class ControladorValoracion {
             @PathVariable Long noteId,
             @Valid @RequestBody ValoracionRequest request,
             @AuthenticationPrincipal Usuario usuario) {
-        return ResponseEntity.ok(servicioValoracion.actualizarValoracion(noteId, request, usuario));
+        return ResponseEntity.ok(valoracionService.actualizarValoracion(noteId, request, usuario));
     }
 
     @GetMapping
     public ResponseEntity<Page<ValoracionResponse>> listarValoraciones(
             @PathVariable Long noteId,
             Pageable pageable) {
-        return ResponseEntity.ok(servicioValoracion.listarValoraciones(noteId, pageable));
+        return ResponseEntity.ok(valoracionService.listarValoraciones(noteId, pageable));
     }
 
     @DeleteMapping
     public ResponseEntity<MensajeResponse> eliminarValoracion(
             @PathVariable Long noteId,
             @AuthenticationPrincipal Usuario usuario) {
-        return ResponseEntity.ok(servicioValoracion.eliminarValoracion(noteId, usuario));
+        return ResponseEntity.ok(valoracionService.eliminarValoracion(noteId, usuario));
     }
 }

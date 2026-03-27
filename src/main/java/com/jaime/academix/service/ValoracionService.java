@@ -7,8 +7,8 @@ import com.jaime.academix.domain.response.ValoracionResponse;
 import com.jaime.academix.entity.Apunte;
 import com.jaime.academix.entity.Usuario;
 import com.jaime.academix.entity.Valoracion;
-import com.jaime.academix.exception.RecursoNoEncontradoException;
-import com.jaime.academix.exception.SolicitudInvalidaException;
+import com.jaime.academix.exception.ResourceNotFoundException;
+import com.jaime.academix.exception.BadRequestException;
 import com.jaime.academix.repository.ApunteRepository;
 import com.jaime.academix.repository.ValoracionRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,23 +19,23 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class ServicioValoracion {
+public class ValoracionService {
 
     private final ValoracionRepository valoracionRepository;
     private final ApunteRepository apunteRepository;
     private final ValoracionAssembler valoracionAssembler;
-    private final ServicioReputacion servicioReputacion;
+    private final ReputacionService reputacionService;
 
     @Transactional
     public ValoracionResponse crearValoracion(Long apunteId, ValoracionRequest request, Usuario usuario) {
         Apunte apunte = buscarApuntePorId(apunteId);
 
         if (apunte.getAutor().getId().equals(usuario.getId())) {
-            throw new SolicitudInvalidaException("No puedes valorar tus propios apuntes");
+            throw new BadRequestException("No puedes valorar tus propios apuntes");
         }
 
         if (valoracionRepository.existsByUsuarioAndApunte(usuario, apunte)) {
-            throw new SolicitudInvalidaException("Ya has valorado este apunte. Usa PUT para actualizar tu valoración");
+            throw new BadRequestException("Ya has valorado este apunte. Usa PUT para actualizar tu valoración");
         }
 
         Valoracion valoracion = Valoracion.builder()
@@ -49,13 +49,13 @@ public class ServicioValoracion {
         actualizarPromedioApunte(apunte);
 
         // Reputación al autor del apunte por la valoración recibida
-        int puntosAutor = servicioReputacion.calcularPuntosValoracion(request.getPuntuacion());
+        int puntosAutor = reputacionService.calcularPuntosValoracion(request.getPuntuacion());
         if (puntosAutor > 0) {
-            servicioReputacion.sumarReputacion(apunte.getAutor(), puntosAutor);
+            reputacionService.sumarReputacion(apunte.getAutor(), puntosAutor);
         }
 
         // +1 reputación al usuario que valora (fomenta participación)
-        servicioReputacion.sumarReputacion(usuario, 1);
+        reputacionService.sumarReputacion(usuario, 1);
 
         return valoracionAssembler.aResponse(valoracion);
     }
@@ -65,7 +65,7 @@ public class ServicioValoracion {
         Apunte apunte = buscarApuntePorId(apunteId);
 
         Valoracion valoracion = valoracionRepository.findByUsuarioAndApunte(usuario, apunte)
-                .orElseThrow(() -> new RecursoNoEncontradoException(
+                .orElseThrow(() -> new ResourceNotFoundException(
                         "No se encontró tu valoración para este apunte"));
 
         int puntuacionAnterior = valoracion.getPuntuacion();
@@ -76,11 +76,11 @@ public class ServicioValoracion {
         actualizarPromedioApunte(apunte);
 
         // Ajustar reputación del autor: quitar puntos anteriores y sumar nuevos
-        int puntosAnteriores = servicioReputacion.calcularPuntosValoracion(puntuacionAnterior);
-        int puntosNuevos = servicioReputacion.calcularPuntosValoracion(request.getPuntuacion());
+        int puntosAnteriores = reputacionService.calcularPuntosValoracion(puntuacionAnterior);
+        int puntosNuevos = reputacionService.calcularPuntosValoracion(request.getPuntuacion());
         int diferencia = puntosNuevos - puntosAnteriores;
         if (diferencia != 0) {
-            servicioReputacion.sumarReputacion(apunte.getAutor(), diferencia);
+            reputacionService.sumarReputacion(apunte.getAutor(), diferencia);
         }
 
         return valoracionAssembler.aResponse(valoracion);
@@ -97,13 +97,13 @@ public class ServicioValoracion {
         Apunte apunte = buscarApuntePorId(apunteId);
 
         Valoracion valoracion = valoracionRepository.findByUsuarioAndApunte(usuario, apunte)
-                .orElseThrow(() -> new RecursoNoEncontradoException(
+                .orElseThrow(() -> new ResourceNotFoundException(
                         "No se encontró tu valoración para este apunte"));
 
         // Quitar reputación del autor que se ganó con esta valoración
-        int puntos = servicioReputacion.calcularPuntosValoracion(valoracion.getPuntuacion());
+        int puntos = reputacionService.calcularPuntosValoracion(valoracion.getPuntuacion());
         if (puntos > 0) {
-            servicioReputacion.sumarReputacion(apunte.getAutor(), -puntos);
+            reputacionService.sumarReputacion(apunte.getAutor(), -puntos);
         }
 
         valoracionRepository.delete(valoracion);
@@ -120,6 +120,6 @@ public class ServicioValoracion {
 
     private Apunte buscarApuntePorId(Long id) {
         return apunteRepository.findById(id)
-                .orElseThrow(() -> new RecursoNoEncontradoException("No se encontró el apunte con id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("No se encontró el apunte con id: " + id));
     }
 }

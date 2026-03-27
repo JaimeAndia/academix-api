@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 
 @Component
-public class JwtPuntoEntradaAutenticacion implements AuthenticationEntryPoint {
+public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     @Override
     public void commence(HttpServletRequest request,

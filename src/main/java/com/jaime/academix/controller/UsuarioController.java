@@ -5,7 +5,7 @@ import com.jaime.academix.domain.request.CambiarRolRequest;
 import com.jaime.academix.domain.response.MensajeResponse;
 import com.jaime.academix.domain.response.UsuarioResponse;
 import com.jaime.academix.entity.Usuario;
-import com.jaime.academix.service.ServicioUsuario;
+import com.jaime.academix.service.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,30 +18,30 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
-public class ControladorUsuario {
+public class UsuarioController {
 
-    private final ServicioUsuario servicioUsuario;
+    private final UsuarioService usuarioService;
 
     @GetMapping("/me")
     public ResponseEntity<UsuarioResponse> obtenerPerfilPropio(@AuthenticationPrincipal Usuario usuario) {
-        return ResponseEntity.ok(servicioUsuario.obtenerPerfilPropio(usuario));
+        return ResponseEntity.ok(usuarioService.obtenerPerfilPropio(usuario));
     }
 
     @PutMapping("/me")
     public ResponseEntity<UsuarioResponse> actualizarPerfil(
             @AuthenticationPrincipal Usuario usuario,
             @RequestBody ActualizarPerfilRequest request) {
-        return ResponseEntity.ok(servicioUsuario.actualizarPerfil(usuario, request));
+        return ResponseEntity.ok(usuarioService.actualizarPerfil(usuario, request));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UsuarioResponse> obtenerPerfilPublico(@PathVariable Long id) {
-        return ResponseEntity.ok(servicioUsuario.obtenerPerfilPublico(id));
+        return ResponseEntity.ok(usuarioService.obtenerPerfilPublico(id));
     }
 
     @GetMapping("/ranking")
     public ResponseEntity<Page<UsuarioResponse>> obtenerRanking(Pageable pageable) {
-        return ResponseEntity.ok(servicioUsuario.obtenerRanking(pageable));
+        return ResponseEntity.ok(usuarioService.obtenerRanking(pageable));
     }
 
     @PutMapping("/{id}/role")
@@ -49,13 +49,13 @@ public class ControladorUsuario {
     public ResponseEntity<UsuarioResponse> cambiarRol(
             @PathVariable Long id,
             @Valid @RequestBody CambiarRolRequest request) {
-        return ResponseEntity.ok(servicioUsuario.cambiarRol(id, request));
+        return ResponseEntity.ok(usuarioService.cambiarRol(id, request));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<MensajeResponse> desactivarCuenta(
             @PathVariable Long id,
             @AuthenticationPrincipal Usuario usuario) {
-        return ResponseEntity.ok(servicioUsuario.desactivarCuenta(id, usuario));
+        return ResponseEntity.ok(usuarioService.desactivarCuenta(id, usuario));
     }
 }

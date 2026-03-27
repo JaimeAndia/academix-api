@@ -17,10 +17,10 @@ import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
-public class JwtFiltroAutenticacion extends OncePerRequestFilter {
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtProveedorToken jwtProveedorToken;
-    private final ServicioDetallesUsuario servicioDetallesUsuario;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final UserDetailsServiceImpl userDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -29,9 +29,9 @@ public class JwtFiltroAutenticacion extends OncePerRequestFilter {
 
         String token = obtenerTokenDeRequest(request);
 
-        if (StringUtils.hasText(token) && jwtProveedorToken.validarToken(token)) {
-            String nombreUsuario = jwtProveedorToken.obtenerNombreUsuario(token);
-            UserDetails userDetails = servicioDetallesUsuario.loadUserByUsername(nombreUsuario);
+        if (StringUtils.hasText(token) && jwtTokenProvider.validarToken(token)) {
+            String nombreUsuario = jwtTokenProvider.obtenerNombreUsuario(token);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(nombreUsuario);
 
             UsernamePasswordAuthenticationToken autenticacion =
                     new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
