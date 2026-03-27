@@ -75,6 +75,7 @@ public class AutenticacionService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
     public AuthResponse login(LoginRequest request) {
         Usuario usuario = usuarioRepository.findByCorreo(request.getUsuarioOCorreo())
                 .or(() -> usuarioRepository.findByNombreUsuario(request.getUsuarioOCorreo()))
@@ -94,6 +95,7 @@ public class AutenticacionService {
                 .build();
     }
 
+    @Transactional(readOnly = true)
     public AuthResponse renovarToken(String refreshToken) {
         if (!jwtTokenProvider.validarToken(refreshToken)) {
             throw new BadRequestException("Refresh token inválido o expirado");

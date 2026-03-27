@@ -27,12 +27,20 @@ public class UsuarioService {
     private final CarreraRepository carreraRepository;
     private final UsuarioAssembler usuarioAssembler;
 
+    @Transactional(readOnly = true)
     public UsuarioResponse obtenerPerfilPropio(Usuario usuario) {
-        return usuarioAssembler.aResponse(usuario);
+        // Refetch de DB para evitar LazyInitializationException en objeto detached
+        Usuario usuarioPersistente = usuarioRepository.findById(usuario.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("No se encontró el usuario actual"));
+        return usuarioAssembler.aResponse(usuarioPersistente);
     }
 
     @Transactional
-    public UsuarioResponse actualizarPerfil(Usuario usuario, ActualizarPerfilRequest request) {
+    public UsuarioResponse actualizarPerfil(Usuario usuarioPrincipal, ActualizarPerfilRequest request) {
+        // Refetch de DB para que el objeto sea persistente/gestionado por hibernate
+        Usuario usuario = usuarioRepository.findById(usuarioPrincipal.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("No se encontró el usuario actual"));
+
         if (request.getNombreCompleto() != null) {
             usuario.setNombreCompleto(request.getNombreCompleto());
         }
@@ -53,12 +61,14 @@ public class UsuarioService {
         return usuarioAssembler.aResponse(usuario);
     }
 
+    @Transactional(readOnly = true)
     public UsuarioResponse obtenerPerfilPublico(Long id) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No se encontró el usuario con id: " + id));
         return usuarioAssembler.aResponsePublico(usuario);
     }
 
+    @Transactional(readOnly = true)
     public Page<UsuarioResponse> obtenerRanking(Pageable pageable) {
         return usuarioRepository.findAllByActivoTrueOrderByReputacionDesc(pageable)
                 .map(usuarioAssembler::aResponsePublico);
